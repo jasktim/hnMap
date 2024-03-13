@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>一师校园导航系统</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&callback=initMap()"></script>
+
+    <!--    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=GkSYMk8QAIWVk1ZwHx8KigmGxjhk6uS3"></script>-->
+<!--    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1H8Dhi2pGmOMYbN4EcaAGr1rv8f7Gmjz"></script>-->
+    <!--    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+    <!--    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=GV4BZ-COE3X-AAN45-TW4LF-GVVMF-SYBT4"></script>-->
+    <!--    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=CQPBZ-QRWCU-2RGVJ-44CGR-5WCY6-WVB5Q"></script>-->
+
+
+    <!--    <link rel="stylesheet" type="text/css" href="../css/getLocation.css" />-->
+    <script src="../js/jquery-3.3.1.min.js"></script>
+<!--    <script src="../npm/sweetalert2@11"></script>-->
+    <script src="../js/layer.js"></script>
+<!--    <script src="https://www.layuicdn.com/layer-v3.1.0/layer.js"></script>-->
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #container {
+            width: 100%;
+            height: 750px;
+        }
+    </style>
+<!--   <script type="text/javascript"-->
+<!--            src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>-->
+</head>
+
+<body>
+<marquee behavior="alternate" direction="left" align="middle">
+    <!--<a style="font-family: 'Times New Roman'">${username}</a>，-->
+    欢迎使用一师校园导航系统！！！</marquee>
+
+<div class="ab">
+<!--        左侧-->
+<!--    <div class="left">
+        <button class="left_btn" onclick="openChangePasswordModal()">修改密码</button>
+        <button class="left_btn" onclick="quit()">退出</button>
+    </div>-->
+
+<!--     弹窗模态框
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <span onclick="closeChangePasswordModal()" style="float: right; cursor: pointer;">&times;</span>
+            <h2>修改密码</h2>
+            <input type="password" id="oldPassword" placeholder="旧密码"><br>
+            <input type="password" id="newPassword" placeholder="新密码"><br>
+            <input type="password" id="confirmNewPassword" placeholder="确认新密码"><br>
+            <button onclick="changePassword()">确认修改</button>
+        </div>
+    </div>-->
+
+<!--        中部-->
+    <div class="center">
+<!--        <div>当前位置:<span id="now_poi_address"></span>-->
+<!--            <button type="button" onclick="geolocation.getLocation(showPosition, showErr, options)"-->
+<!--                    style="padding:0;margin:0;font-size:16px;height: 22px;width: 120px; float: right">获取当前位置</button>-->
+        </div>
+
+<!--        <div>到达位置:<span id="poi_address"></span>-->
+        </div>
+        <input type="button" id="btn-2d" onclick="change2D()" value="切换2D">
+        <input type="button" id="btn-3d" onclick="change3D()" value="切换3D">
+        <button type="button" onclick="reInitMap()" style="padding: 0;margin: 0;font-size: 16px;float: right;">重置</button>
+        <button type="button" onclick="jiexiDriving()" style="padding: 0;margin: 0;font-size: 16px;float: right;">开始导航</button>
+
+        <div id="container"></div>
+    </div>
+<!--        右侧-->
+    <div class="right" id="right" >
+<!--        <div>起始:经度 <span id="now_lat"></span>,纬度 <span id="now_lng"></span></div>-->
+<!--        <div>到达:经度 <span id="poi_lat"></span>,纬度 <span id="poi_lng"></span>-->
+
+        </div>
+
+
+    </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    var ne = new TMap.LatLng(28.20035471257447312610, 112.87014484405517578125);//东北角坐标
+    var sw = new TMap.LatLng(28.18908336620994603550, 112.86387920379638671875);//西南角坐标
+    var center = new TMap.LatLng(28.196209, 112.867602);//
+    var polylineLayer;
+    var marker;
+    // function initMap() {
+    var map = new TMap.Map("container", {
+        pitch: 30,
+        // zoom: 20,
+        center: center
+    });
+    map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.ZOOM);
+    var latLngBounds = new TMap.LatLngBounds(sw, ne)
+    // map.fitBounds(latLngBounds); //根据指定的范围调整地图视野
+    map.setBoundary(latLngBounds); //根据指定的范围调整地图视野
+    // }
+/*    function loadScript() {
+        //创建script标签，并设置src属性添加到body中
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        // script.src = "https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&callback=?";
+        script.src = "https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77";
+        document.body.appendChild(script);
+    }
+    window.onload = loadScript;*/
+
+    function change2D() {
+        map.setViewMode('2D');
+    }
+
+    function change3D() {
+        map.setViewMode('3D');
+        map.setPitch(70);
+    }
+
+    //初始化marker图层
+    markerLayer = new TMap.MultiMarker({
+        id: 'marker-layer',
+        map: map
+    });
+
+    //监听点击事件添加marker
+    var now_lat;
+    var now_lng;
+    var poi_lat;
+    var poi_lng;
+
+    map.on("click", (evt) => {
+        markerLayer.add({
+            position: evt.latLng
+        });
+        // console.log(markerLayer);
+
+        now_lat = markerLayer.geometries[0].position.lat;
+        now_lng = markerLayer.geometries[0].position.lng;
+        poi_lat = markerLayer.geometries[markerLayer.geometries.length - 1].position.lat;
+        poi_lng = markerLayer.geometries[markerLayer.geometries.length - 1].position.lng;
+        console.log(now_lat+","+now_lng);
+        console.log(poi_lat+","+poi_lng);
+        /*        for (var i in markerLayer.geometries) {
+                    var lat = markerLayer.geometries[i].position.lat;
+                    var lng = markerLayer.geometries[i].position.lng;
+
+
+                    // var p1 =new qq.maps.LatLng(p[1],p[0]);
+                    // console.log(p1);
+                    // arrayList.push(p1);
+                    // makemarker(p1,porints[i].name);
+
+                    // console.log(lat);
+                }*/
+    });
+
+
+    /*    //创建marker事件
+        function createMarker() {
+            if (!marker) {
+                marker = new TMap.MultiMarker({
+                    id: 'marker-layer',
+                    map: map,
+                    styles: {
+                        "marker": new TMap.MarkerStyle({
+                            "width": 25,
+                            "height": 35,
+                            "anchor": { x: 16, y: 32 },
+                            "src": 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png'
+                        })
+                    },
+                    geometries: [{
+                        "id": 'demo',
+                        "styleId": 'marker',
+                        "position": new TMap.LatLng(39.984104, 116.307503),
+                        "properties": {
+                            "title": "marker"
+                        }
+                    }]
+                });
+            }
+        }
+        //移除marker事件
+        function removeMarker() {
+            if (marker) {
+                marker.setMap(null);
+                marker = null;
+            }
+        }*/
+
+
+
+
+    //发起JSONP请求，获取路线规划结果
+    function jiexiDriving() {
+        //WebServiceAPI请求URL（驾车路线规划默认会参考实时路况进行计算）
+        var url = "https://apis.map.qq.com/ws/direction/v1/driving/"; //请求路径
+        url += "?from=" + now_lat + "," + now_lng;  //起点坐标
+        url += "&to=" + poi_lat + "," + poi_lng;  //终点坐标
+        url += "&output=jsonp&callback=cb";	//指定JSONP回调函数名，本例为cb
+        url += "&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"; //开发key，可在控制台自助创建
+        console.log(url);
+        jsonp_request(url);
+    }
+
+
+    //浏览器调用WebServiceAPI需要通过Jsonp的方式，此处定义了发送JOSNP请求的函数
+    function jsonp_request(url) {
+        var script = document.createElement('script');
+        script.src = url;
+        document.body.appendChild(script);
+    }
+
+    //定义请求回调函数，在此拿到计算得到的路线，并进行绘制
+    function cb(ret) {
+        console.log(ret);
+        var coords = ret.result.routes[0].polyline, pl = [];
+        //坐标解压（返回的点串坐标，通过前向差分进行压缩）
+        var kr = 1000000;
+        for (var i = 2; i < coords.length; i++) {
+            coords[i] = Number(coords[i - 2]) + Number(coords[i]) / kr;
+        }
+        //将解压后的坐标放入点串数组pl中
+        for (var i = 0; i < coords.length; i += 2) {
+            pl.push(new TMap.LatLng(coords[i], coords[i + 1]));
+        }
+        console.log(pl);
+        requestAnimationFrame(function() {
+            display_polyline(pl)//显示路线
+
+            // display_polyline(pl, map);
+
+        }, 0);
+        //标记起终点marker
+/*                marker = new TMap.MultiMarker({
+                    id: 'marker-layer2',
+                    map: map,
+                    styles: {
+                        "start": new TMap.MarkerStyle({
+                            "width": 25,
+                            "height": 35,
+                            "anchor": { x: 16, y: 32 },
+                            "src": 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/start.png'
+                        }),
+                        "end": new TMap.MarkerStyle({
+                            "width": 25,
+                            "height": 35,
+                            "anchor": { x: 16, y: 32 },
+                            "src": 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/end.png'
+                        })
+                    },
+                    geometries: [{
+                        "id": 'start',
+                        "styleId": 'start',
+                        "position": new TMap.LatLng(now_lat,now_lat)
+                    }, {
+                        "id": 'end',
+                        "styleId": 'end',
+                        "position": new TMap.LatLng(poi_lat,poi_lat)
+                    }]
+                });*/
+
+
+    }
+
+
+        //创建 MultiPolyline显示折线
+        console.log(map);
+        polylineLayer = new TMap.MultiPolyline({
+            id: 'polyline-layer', //图层唯一标识
+            map: map,//绘制到目标地图
+            //折线样式定义
+            styles: {
+                'style_blue': new TMap.PolylineStyle({
+                    'color': '#3777FF', //线填充色
+                    'width': 8, //折线宽度
+                    'borderWidth': 5, //边线宽度
+                    'borderColor': '#FFF', //边线颜色
+                    'lineCap': 'round', //线端头方式
+                })
+            },});
+    function display_polyline(pl) {
+            //折线数据定义
+        polylineLayer.add({
+                    'id': 'pl_1',//折线唯一标识，删除时使用
+                    'styleId': 'style_blue',//绑定样式名
+                    'paths': pl
+                });
+
+    }
+    function reInitMap() {
+        if (markerLayer) {
+            markerLayer.setMap(null);
+            // markerLayer = null;
+            //初始化marker图层
+            markerLayer = new TMap.MultiMarker({
+                id: 'marker-layer',
+                map: map
+            });
+        }
+        polylineLayer.remove("pl_1")
+
+    }
+</script>
+
+<!--<script type="text/javascript">
+    var now_lat;
+    var now_lng;
+    $.ajax({
+        type: 'get',
+        url: 'https://apis.map.qq.com/ws/location/v1/ip',
+        data: {
+            // ip:"240e:468:420:7aef:890a:4b8b:fb5d:1e70",
+            key: 'NUMBZ-QW4RF-CLQJI-J5A77-XIRM3-26BWY', //腾讯key（我的测试key）
+            output: 'jsonp',
+        },
+        dataType: 'jsonp',
+        success: function (res) {
+            console.log(res);
+            now_lat = res.result.location.lat;
+            now_lng = res.result.location.lng;
+            // alert(now_lat);
+            var center = new TMap.LatLng(now_lat, now_lng);
+            // var center = new TMap.LatLng(Number(now_lat), Number(now_lng));
+            //初始化地图
+            var map = new TMap.Map("container", {
+                rotation: 0,//设置地图旋转角度
+                pitch: 0, //设置俯仰角度（0~45）
+                zoom: 20,//设置地图缩放级别
+                center: center//设置地图中心点坐标
+            });
+        }
+    })
+    // alert(now_Latlng.lat, now_Latlng.lng);
+    // var center = new TMap.LatLng(28.19472769873793183137, 112.86547243595123291016);
+    // var center = new TMap.LatLng(28.23529, 112.93134);
+    // alert(now_lng);
+
+
+</script>-->
+
+<!--<script type="text/JavaScript">
+    // var appkey ="GV4BZ-COE3X-AAN45-TW4LF-GVVMF-SYBT4";
+    // var appkey ="CQPBZ-QRWCU-2RGVJ-44CGR-5WCY6-WVB5Q";
+    var appkey ="OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77";
+    var geolocation = new qq.maps.Geolocation(appkey, "myapp");
+    var options = {timeout: 8000};
+    var porints = [];
+    var map/* = new qq.maps.Map()*/;
+    // console.log("porints的类型"+typeof porints);
+    $(function(){
+        //加载完成后就取当前位置
+        geolocation.getLocation(showPosition, showErr, options);
+    })
+
+    function showPosition(position) {
+        console.log(position);
+        $('#now_lat').html(position.lat);
+        $('#now_lng').html(position.lng);
+        // $('#poi_lat').html(position.lat);
+        // $('#poi_lng').html(position.lng);
+        //取出位置坐标了，设置地图显示出来
+        map = new qq.maps.Map(document.getElementById("pos-area"), {
+            // 地图的中心地理坐标。
+            center: new qq.maps.LatLng(position.lat,position.lng),
+            zoom:18
+        });
+        //添加标记
+        var marker = new qq.maps.Marker({
+            position:  new qq.maps.LatLng(position.lat,position.lng),
+            map: map
+        });
+        //解析地址
+        jiexiNowAddress(position.lat,position.lng);
+        // let now_lat = document.getElementById("now_lat").innerHTML;
+        // let now_lng = document.getElementById("now_lng").innerHTML;
+        // let poi_lat = document.getElementById("poi_lat").innerHTML;
+        // let poi_lng = document.getElementById("poi_lng").innerHTML;
+        porints.push({"name":"起点","xy":[position.lng,position.lat]});
+            // {"name":"终点","xy":[poi_lng,poi_lat]}
+        //绑定地图点击事件
+        var count = 1;
+        qq.maps.event.addListener(map, "click", function (e) {
+            $('#poi_lat').html(e.latLng.getLat().toFixed(20));
+            $('#poi_lng').html(e.latLng.getLng().toFixed(20));
+            // porints.append({"name":"终点","xy":[poi_lng,poi_lat]});
+            //先移除标记，再添加标记
+            // marker.setMap(null);
+            marker = new qq.maps.Marker({
+                position:  new qq.maps.LatLng(e.latLng.getLat(),e.latLng.getLng()),
+                map: map
+            });
+            porints.push({"name":"目的"+count++,"xy":[e.latLng.getLng(),e.latLng.getLat()]});
+
+            jiexiAddress(e.latLng.getLat(),e.latLng.getLng());
+        });
+    };
+
+    function showErr() {
+        alert("定位失败！");
+        //TODO::尝试IP定位：
+
+    };
+
+    //解析起点地址
+    function jiexiNowAddress(lat,lng){
+        var  url3 = encodeURI("https://apis.map.qq.com/ws/geocoder/v1/?location=" + lat + "," + lng + "&key="+appkey+"&output=jsonp&&callback=?");
+        // var url3 = encodeURI("https://apis.map.qq.com/ws/geocoder/v1/?location=28.19429178446688766257,112.86895675937557825819&key=CQPBZ-QRWCU-2RGVJ-44CGR-5WCY6-WVB5Q&output=jsonp&callback=?");
+        $.getJSON(url3, function (result) {
+            if(result.result!=undefined){
+                $('#now_poi_address').html(result.result.address);
+            }else{
+                $('#now_poi_address').html('');
+            }
+
+        })
+    }
+
+    //解析地址
+    function jiexiAddress(lat,lng){
+        var  url3 = encodeURI("https://apis.map.qq.com/ws/geocoder/v1/?location=" + lat + "," + lng + "&key="+appkey+"&output=jsonp&&callback=?");
+        $.getJSON(url3, function (result) {
+            if(result.result!=undefined){
+                $('#poi_address').html(result.result.address);
+            }else{
+                $('#poi_address').html('');
+            }
+
+        })
+    }
+
+    //解析驾车地址
+    // console.log("porints的类型"+typeof porints);
+    // let name = porints[porints.length-1].name;
+    // console.log(name);
+    var markersArray = [],route_lines=[];            // 创建Map实例
+    // var center=new qq.maps.LatLng( porints[0]['xy'][1],porints[0]['xy'][0]);
+    // var map=new qq.maps.Map(document.getElementById("pos-area"),{center:center,zoom:18});
+    function showPoly(pointList) {
+        for (var i = 0; i < pointList.length; i++) {
+            var start =i;var end= i+1;
+            if(!pointList[end])return;
+            var driving =new qq.maps.DrivingService({
+                complete : function(response){
+                    directions_routes = response.detail.routes;
+                    //所有可选路线方案
+                    for(var i = 0;i < directions_routes.length; i++){
+                        var route = directions_routes[i];
+                        map.fitBounds(response.detail.bounds); //调整地图窗口显示所有路线
+                        var polyline = new qq.maps.Polyline(
+                            {
+                                path: route.path,
+                                strokeColor: '#3893F9',
+                                // strokeColor: '#ce1f5f',
+                                strokeWeight: 6,
+                                map: map,
+                                // step:
+                            }
+                        );
+                        console.log(polyline);
+                        route_lines.push(polyline);
+                    }
+                }
+            });
+            console.log("ok");
+            driving.search(pointList[start], pointList[end]); //waypoints表示途经点
+        }
+    }
+    function makemarker(center,name){
+        var marker=new qq.maps.Marker({position:center,map:map});// 创建标注
+        markersArray.push(marker);
+        if(name){
+            var label = new qq.maps.Label({ content: name,map: map,
+                offset: new qq.maps.Size(10, -50),
+                position: center,
+            });
+        }
+    }
+    function jiexiDriving(){
+        porints[porints.length-1].name = "终点";
+        var arrayList = [];
+        for (var i in porints) {
+            var p = porints[i].xy;
+            var p1 =new qq.maps.LatLng(p[1],p[0]);
+            console.log(p1);
+            arrayList.push(p1);
+            makemarker(p1,porints[i].name);
+        }
+        showPoly(arrayList);//显示轨迹
+    }
+/*
+    function jiexiDriving(){
+        let now_lat = document.getElementById("now_lat");
+        let now_lng = document.getElementById("now_lng");
+        let poi_lat = document.getElementById("poi_lat");
+        let poi_lng = document.getElementById("poi_lng");
+        var  url3 = encodeURI("https://apis.map.qq.com/ws/direction/v1/driving/?from=" + now_lat + "," + now_lng + "to=" + poi_lat + "," + poi_lng + "&output=json&callback=cb&key="+appkey);
+        $.getJSON(url3, function (result) {
+            console.log(result)
+            if(result.result!=undefined){
+                $('#poi_address').html(/!*result.result.address*!/'true');
+            }else{
+                $('#poi_address').html('');
+            }
+
+        })
+    }
+*/
+
+</script>-->
+<!--<script type="text/javascript">
+    var map = new BMap.Map("container");
+    map.centerAndZoom("湖南第一师范学院", 24);
+
+    map.enableScrollWheelZoom(true);//开启鼠标滚轮缩放
+    map.addControl(new BMap.NavigationControl()); //添加平移缩放控件
+    map.addControl(new BMap.ScaleControl());  //添加比例尺控件
+    // map.addControl(new BMap.OverviewMapControl({isOpen: true}));  //添加缩略地图控件
+
+    var localSearch = new BMap.LocalSearch(map);
+    var keyword = "";
+
+
+    //获取当前位置
+    var geolocation = new BMap.Geolocation();
+    geolocation.getCurrentPosition(function(r){
+        if(this.getStatus() == BMAP_STATUS_SUCCESS){
+            map.centerAndZoom(r.point, 24);
+            var mk = new BMap.Marker(r.point);
+            map.addOverlay(mk);
+            map.panTo(r.point);
+            console.log('您的位置:'+r.point.lng+','+r.point.lat);
+        }else {
+            alert('failed'+this.getStatus());
+        }
+    }, {enableHighAccuracy: true});
+
+
+    var color=null;
+
+    var person= {};
+    var xingzuo="";
+    var shengxiao="";
+
+
+</script>-->
+<script>
+    function openChangePasswordModal() {
+        $('#changePasswordModal').css('display', 'block');
+    }
+
+    function closeChangePasswordModal() {
+        $('#changePasswordModal').css('display', 'none');
+    }
+
+    function changePassword() {
+        var oldPassword = $('#oldPassword').val();
+        var newPassword = $('#newPassword').val();
+        var confirmNewPassword = $('#confirmNewPassword').val();
+
+        // 检查是否有输入内容
+        if (oldPassword === '' || newPassword === '' || confirmNewPassword === '') {
+            Swal.fire({
+                icon: 'error',
+                title: '错误',
+                text: '请填写所有字段!'
+            });
+            return;
+        }
+
+        // 检查新密码是否一致
+        if (newPassword !== confirmNewPassword) {
+            Swal.fire({
+                icon: 'error',
+                title: '错误',
+                text: '新密码不一致，请重新输入!'
+            });
+            return;
+        }
+
+        // 发起 AJAX 请求
+        $.ajax({
+            url: 'changePassword', // 替换为实际的后端处理密码修改的 URL
+            method: 'GET',
+            data: {
+                oldPassword: oldPassword,
+                newPassword: newPassword
+            },
+            async: true,
+            cache:true,
+            success: function(data) {
+                if(data.bool == true) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '成功',
+                        text: '密码修改成功!'
+                    });
+                    // 获取当前页面的 URL
+                    let currentURL = window.location.href;
+
+                    // 替换路径中的 admin/manage 为 login.jsp
+                    let newURL = currentURL.substring(0, currentURL.indexOf("/Demo9") + 6) + "/login.jsp";
+
+
+                    // 设置延迟跳转到上一级目录的 login.jsp 页面
+                    setTimeout(function () {
+                        window.location.href = newURL;
+                    }, 900);
+                    closeChangePasswordModal(); // 关闭弹窗
+                }
+                if(data.bool == false){
+                    Swal.fire({
+                        icon: 'error',
+                        title: '错误',
+                        text: '旧密码错误,请重试!'
+                    });
+                }
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: '错误',
+                    text: '密码修改失败，请重试!'
+                });
+            }
+        });
+    }
+
+    function quit() {
+        layer.msg('退出成功！', {icon: 6});
+        // 获取当前页面的 URL
+        var currentURL = window.location.href;
+
+        // 替换路径中的 admin/manage 为 login.jsp
+        var newURL = currentURL.substring(0, currentURL.indexOf("/Demo9") + 6)+"/login.jsp";
+
+
+        // 设置延迟跳转到上一级目录的 login.jsp 页面
+        setTimeout(function() {
+            window.location.href = newURL;
+        }, 900);
+
+    }
+
+</script>
+
+</html>
