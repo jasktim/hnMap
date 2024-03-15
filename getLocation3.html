@@ -4,20 +4,21 @@
     <title>一师校园导航系统</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
-    <script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&callback=initMap()"></script>
+<!--    <script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&callback=initMap()"></script>-->
+    <script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>
 
     <!--    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=GkSYMk8QAIWVk1ZwHx8KigmGxjhk6uS3"></script>-->
 <!--    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=1H8Dhi2pGmOMYbN4EcaAGr1rv8f7Gmjz"></script>-->
-    <!--    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
     <!--    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=GV4BZ-COE3X-AAN45-TW4LF-GVVMF-SYBT4"></script>-->
     <!--    <script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=CQPBZ-QRWCU-2RGVJ-44CGR-5WCY6-WVB5Q"></script>-->
 
 
     <!--    <link rel="stylesheet" type="text/css" href="../css/getLocation.css" />-->
-    <script src="../js/jquery-3.3.1.min.js"></script>
+        <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!--    <script src="../js/jquery-3.3.1.min.js"></script>-->
 <!--    <script src="../npm/sweetalert2@11"></script>-->
-    <script src="../js/layer.js"></script>
-<!--    <script src="https://www.layuicdn.com/layer-v3.1.0/layer.js"></script>-->
+<!--    <script src="../js/layer.js"></script>-->
+    <script src="https://www.layuicdn.com/layer-v3.1.0/layer.js"></script>
     <style type="text/css">
         html,
         body {
@@ -30,12 +31,22 @@
             width: 100%;
             height: 750px;
         }
+
+        #img {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            height: 100%;
+            width: 100%;
+        }
     </style>
 <!--   <script type="text/javascript"-->
 <!--            src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>-->
 </head>
 
 <body>
+<img id="img" src="https://tse4-mm.cn.bing.net/th/id/OIP-C.oe5B4G8FFmRrReaqsvKVkAHaDw?rs=1&pid=ImgDetMain"/>
+
 <marquee behavior="alternate" direction="left" align="middle">
     <!--<a style="font-family: 'Times New Roman'">${username}</a>，-->
     欢迎使用一师校园导航系统！！！</marquee>
@@ -70,11 +81,19 @@
         </div>
         <input type="button" id="btn-2d" onclick="change2D()" value="切换2D">
         <input type="button" id="btn-3d" onclick="change3D()" value="切换3D">
+        <input type="button" onclick="setTowPoints()" value="两点">
+        <input type="button" onclick="setMorePoints()" value="多点">
+
+
         <button type="button" onclick="reInitMap()" style="padding: 0;margin: 0;font-size: 16px;float: right;">重置</button>
-        <button type="button" onclick="jiexiDriving()" style="padding: 0;margin: 0;font-size: 16px;float: right;">开始导航</button>
+        <button type="button" onclick="setDriving()" style="padding: 0;margin: 0;font-size: 16px;float: right;">开始导航</button>
+        <button type="button" onclick="setDriving()" style="padding: 0;margin: 0;font-size: 16px;float: right;">驾车</button>
+        <button type="button" onclick="setWalking()" style="padding: 0;margin: 0;font-size: 16px;float: right;">步行</button>
+        <button type="button" onclick="setBicycling()" style="padding: 0;margin: 0;font-size: 16px;float: right;">骑行</button>
+        <input type="button" id="login" onclick="change3D()" value="login">
 
         <div id="container"></div>
-    </div>
+<!--    </div>-->
 <!--        右侧-->
     <div class="right" id="right" >
 <!--        <div>起始:经度 <span id="now_lat"></span>,纬度 <span id="now_lng"></span></div>-->
@@ -83,22 +102,31 @@
         </div>
 
 
-    </div>
-    </div>
+<!--    </div>-->
+<!--    </div>-->
 
 </body>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>
 <script type="text/javascript">
+    // Demo 哈尔滨工业大学校园地图
     var ne = new TMap.LatLng(28.20035471257447312610, 112.87014484405517578125);//东北角坐标
     var sw = new TMap.LatLng(28.18908336620994603550, 112.86387920379638671875);//西南角坐标
-    var center = new TMap.LatLng(28.196209, 112.867602);//
+    var center = new TMap.LatLng(28.196209, 112.867602);
     var polylineLayer;
     var marker;
+    var key = 'NUMBZ-QW4RF-CLQJI-J5A77-XIRM3-26BWY';
+    var point = 2;  // 2 两点
+    var way = 1;    // 1 驾车   2 步行   3 骑行
     // function initMap() {
     var map = new TMap.Map("container", {
         pitch: 30,
         // zoom: 20,
         center: center
     });
+    map.on("tilesloaded", function () {
+        document.getElementById("img").style.display="none";
+    })
+
     map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.ZOOM);
     var latLngBounds = new TMap.LatLngBounds(sw, ne)
     // map.fitBounds(latLngBounds); //根据指定的范围调整地图视野
@@ -114,10 +142,10 @@
     }
     window.onload = loadScript;*/
 
+
     function change2D() {
         map.setViewMode('2D');
     }
-
     function change3D() {
         map.setViewMode('3D');
         map.setPitch(70);
@@ -128,7 +156,61 @@
         id: 'marker-layer',
         map: map
     });
-
+    //创建marker事件
+    function createFirstMarker() {
+        // if (!marker) {
+        /*            marker = new TMap.MultiMarker({
+                        id: 'marker-layer',
+                        map: map,
+                        styles: {
+                            "marker": new TMap.MarkerStyle({
+                                "width": 25,
+                                "height": 35,
+                                "anchor": { x: 16, y: 32 },
+                                "src": 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png'
+                            })
+                        },
+                        geometries: [{
+                            "id": 'demo',
+                            "styleId": 'marker',
+                            "position": new TMap.LatLng(39.984104, 116.307503),
+                            "properties": {
+                                "title": "marker"
+                            }
+                        }]
+                    });*/
+        markerLayer.add({
+            position: center
+        });
+        // console.log(markerLayer["geometries"])
+        now_lat = markerLayer.geometries[0].position.lat;
+        now_lng = markerLayer.geometries[0].position.lng;
+        console.log(now_lat+","+now_lng);
+        // }
+    }
+    function setTowPoints() {
+        // console.log(markerLayer["geometries"][markerLayer["geometries"].length-1])
+        point = 2;
+/*        while (markerLayer["geometries"].length>=2){
+            markerLayer.remove(markerLayer["geometries"][1].id);
+        }*/
+    }
+    function setMorePoints() {
+        point = 3;
+    }
+    
+    function setDriving() {
+        way = 1;
+        jiexiDriving();
+    }
+    function setWalking() {
+        way = 2;
+        jiexiWalking();
+    }
+    function setBicycling() {
+        way = 3;
+        jiexiBicycling();
+    }
     //监听点击事件添加marker
     var now_lat;
     var now_lng;
@@ -136,16 +218,26 @@
     var poi_lng;
 
     map.on("click", (evt) => {
+
+        if (point == 2){
+            while (markerLayer["geometries"].length>=2){
+                markerLayer.remove(markerLayer["geometries"][1].id);
+            }
+        }
         markerLayer.add({
             position: evt.latLng
         });
         // console.log(markerLayer);
-
-        now_lat = markerLayer.geometries[0].position.lat;
-        now_lng = markerLayer.geometries[0].position.lng;
         poi_lat = markerLayer.geometries[markerLayer.geometries.length - 1].position.lat;
         poi_lng = markerLayer.geometries[markerLayer.geometries.length - 1].position.lng;
-        console.log(now_lat+","+now_lng);
+        if(way == 2){
+            jiexiWalking();
+        }else if(way ==3){
+            jiexiBicycling();
+        }else{
+            jiexiDriving();
+        }
+
         console.log(poi_lat+","+poi_lng);
         /*        for (var i in markerLayer.geometries) {
                     var lat = markerLayer.geometries[i].position.lat;
@@ -162,54 +254,51 @@
     });
 
 
-    /*    //创建marker事件
-        function createMarker() {
-            if (!marker) {
-                marker = new TMap.MultiMarker({
-                    id: 'marker-layer',
-                    map: map,
-                    styles: {
-                        "marker": new TMap.MarkerStyle({
-                            "width": 25,
-                            "height": 35,
-                            "anchor": { x: 16, y: 32 },
-                            "src": 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png'
-                        })
-                    },
-                    geometries: [{
-                        "id": 'demo',
-                        "styleId": 'marker',
-                        "position": new TMap.LatLng(39.984104, 116.307503),
-                        "properties": {
-                            "title": "marker"
-                        }
-                    }]
-                });
-            }
-        }
-        //移除marker事件
-        function removeMarker() {
-            if (marker) {
-                marker.setMap(null);
-                marker = null;
-            }
-        }*/
-
-
-
 
     //发起JSONP请求，获取路线规划结果
     function jiexiDriving() {
+        if (polylineLayer["_idSet"])
+            polylineLayer.remove("pl_1");
+
         //WebServiceAPI请求URL（驾车路线规划默认会参考实时路况进行计算）
         var url = "https://apis.map.qq.com/ws/direction/v1/driving/"; //请求路径
         url += "?from=" + now_lat + "," + now_lng;  //起点坐标
         url += "&to=" + poi_lat + "," + poi_lng;  //终点坐标
         url += "&output=jsonp&callback=cb";	//指定JSONP回调函数名，本例为cb
-        url += "&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"; //开发key，可在控制台自助创建
+        url += "&key="+key; //开发key，可在控制台自助创建
         console.log(url);
         jsonp_request(url);
     }
 
+    function jiexiWalking() {
+        // console.log(polylineLayer)
+        if (polylineLayer["_idSet"])
+        polylineLayer.remove("pl_1");
+
+        //WebServiceAPI请求URL（驾车路线规划默认会参考实时路况进行计算）
+        var url = "https://apis.map.qq.com/ws/direction/v1/walking/"; //请求路径
+        url += "?from=" + now_lat + "," + now_lng;  //起点坐标
+        url += "&to=" + poi_lat + "," + poi_lng;  //终点坐标
+        url += "&output=jsonp&callback=cb";	//指定JSONP回调函数名，本例为cb
+        url += "&key="+key; //开发key，可在控制台自助创建
+        console.log(url);
+        jsonp_request(url);
+    }
+    
+    function jiexiBicycling() {
+        // console.log(polylineLayer)
+        if (polylineLayer["_idSet"])
+            polylineLayer.remove("pl_1");
+
+        //WebServiceAPI请求URL（驾车路线规划默认会参考实时路况进行计算）
+        var url = "https://apis.map.qq.com/ws/direction/v1/bicycling/"; //请求路径
+        url += "?from=" + now_lat + "," + now_lng;  //起点坐标
+        url += "&to=" + poi_lat + "," + poi_lng;  //终点坐标
+        url += "&output=jsonp&callback=cb";	//指定JSONP回调函数名，本例为cb
+        url += "&key="+key; //开发key，可在控制台自助创建
+        console.log(url);
+        jsonp_request(url);
+    }
 
     //浏览器调用WebServiceAPI需要通过Jsonp的方式，此处定义了发送JOSNP请求的函数
     function jsonp_request(url) {
@@ -232,12 +321,10 @@
             pl.push(new TMap.LatLng(coords[i], coords[i + 1]));
         }
         console.log(pl);
-        requestAnimationFrame(function() {
-            display_polyline(pl)//显示路线
-
+        // requestAnimationFrame(function() {
+        display_polyline(pl)//显示路线
             // display_polyline(pl, map);
-
-        }, 0);
+        // }, 0);
         //标记起终点marker
 /*                marker = new TMap.MultiMarker({
                     id: 'marker-layer2',
@@ -266,26 +353,26 @@
                         "position": new TMap.LatLng(poi_lat,poi_lat)
                     }]
                 });*/
-
-
     }
 
 
-        //创建 MultiPolyline显示折线
-        console.log(map);
-        polylineLayer = new TMap.MultiPolyline({
-            id: 'polyline-layer', //图层唯一标识
-            map: map,//绘制到目标地图
-            //折线样式定义
-            styles: {
-                'style_blue': new TMap.PolylineStyle({
-                    'color': '#3777FF', //线填充色
-                    'width': 8, //折线宽度
-                    'borderWidth': 5, //边线宽度
-                    'borderColor': '#FFF', //边线颜色
-                    'lineCap': 'round', //线端头方式
-                })
-            },});
+    //创建 MultiPolyline显示折线
+    // console.log(map);
+    polylineLayer = new TMap.MultiPolyline({
+        id: 'polyline-layer', //图层唯一标识
+        map: map,//绘制到目标地图
+        //折线样式定义
+        styles: {
+            'style_blue': new TMap.PolylineStyle({
+                'color': '#3777FF', //线填充色
+                'width': 8, //折线宽度
+                'borderWidth': 5, //边线宽度
+                'borderColor': '#FFF', //边线颜色
+                'lineCap': 'round', //线端头方式
+            })
+        },});
+
+    createFirstMarker();
     function display_polyline(pl) {
             //折线数据定义
         polylineLayer.add({
@@ -293,7 +380,6 @@
                     'styleId': 'style_blue',//绑定样式名
                     'paths': pl
                 });
-
     }
     function reInitMap() {
         if (markerLayer) {
@@ -305,7 +391,9 @@
                 map: map
             });
         }
-        polylineLayer.remove("pl_1")
+
+        polylineLayer.remove("pl_1");
+        createFirstMarker();
 
     }
 </script>
@@ -345,7 +433,6 @@
 
 
 </script>-->
-
 <!--<script type="text/JavaScript">
     // var appkey ="GV4BZ-COE3X-AAN45-TW4LF-GVVMF-SYBT4";
     // var appkey ="CQPBZ-QRWCU-2RGVJ-44CGR-5WCY6-WVB5Q";
