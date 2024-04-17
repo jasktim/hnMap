@@ -15,26 +15,41 @@
 </head>
 <body>
 <!-- 地图容器 -->
-<div id="map"></div>
+<div id="map" style="width: 100%; height: 750px;"></div>
 
 <script>
     // 初始化地图对象
     var map = new qq.maps.Map(document.getElementById('map'), {
         center: new qq.maps.LatLng(39.916527, 116.397128), // 北京市中心坐标
-        zoom: 12 // 缩放级别
+        zoom: 18 // 缩放级别
+    });
+
+    var marker = new TMap.MultiMarker({
+        id: 'marker',
+        map: map,
+        styles: {
+            'start': new TMap.MarkerStyle({
+                anchor: {
+                    x: 16,
+                    y: 32,
+                },
+                src: 'https://mapapi.qq.com/web/miniprogram/demoCenter/images/marker-start.png',
+            }),
+        }
     });
 
     // 初始化轨迹线条
     var path = new qq.maps.Polyline({
+        path: [],
         map: map,
-        strokeColor: '#0000FF',
+        strokeColor: '#FF0000',
         strokeWeight: 3
     });
 
-    // 获取当前位置并监听位置变化
-    navigator.geolocation.watchPosition(function(position) {
+    // 定义位置变化回调函数
+    function updatePosition(position) {
         var latLng = new qq.maps.LatLng(position.coords.latitude, position.coords.longitude);
-
+        map.setCenter(latLng);
         // 将新的位置坐标添加到轨迹路径中
         path.getPath().push(latLng);
 
@@ -43,7 +58,14 @@
 
         // 移动地图中心到当前位置
         map.panTo(latLng);
-    });
+    }
+
+    // 开始监听位置变化
+    if (navigator.geolocation) {
+        var watchId = navigator.geolocation.watchPosition(updatePosition);
+    } else {
+        alert('浏览器不支持地理定位功能！');
+    }
 </script>
 </body>
 </html>
