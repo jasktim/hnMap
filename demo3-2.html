@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map with Moving Trajectory</title>
     <!-- 引入腾讯地图 JavaScript API -->
-    <script src="https://map.qq.com/api/js?v=2.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>
+<!--    <script src="https://map.qq.com/api/js?v=2.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>-->
+    <script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>
+
     <style>
         #map {
             width: 100%;
-            height: 400px; /* 设置地图容器的高度 */
+            height: 750px; /* 设置地图容器的高度 */
         }
     </style>
 </head>
@@ -18,10 +20,11 @@
 <div id="map" style="width: 100%; height: 750px;"></div>
 
 <script>
+
     // 初始化地图对象
-    var map = new qq.maps.Map(document.getElementById('map'), {
-        center: new qq.maps.LatLng(39.916527, 116.397128), // 北京市中心坐标
-        zoom: 18 // 缩放级别
+    var map = new TMap.Map("map", {
+        center: new TMap.LatLng(39.916527, 116.397128),
+        zoom: 18
     });
 
     var marker = new TMap.MultiMarker({
@@ -38,34 +41,86 @@
         }
     });
 
+    var polylineLayer = new TMap.MultiPolyline({
+        id: 'polyline-layer', //图层唯一标识
+        map: map,//绘制到目标地图
+        //折线样式定义
+        styles: {
+            'polyline1': new TMap.PolylineStyle({
+                // 'color': '#3777FF', //线填充色
+                'color': '#2A88FF', //线填充色
+                'width': 8, //折线宽度
+                'borderWidth': 3, //边线宽度
+                'borderColor': '#0569FF', //边线颜色
+                'lineCap': 'round', //线端头方式
+                'showArrow': true,
+                'arrowOptions': {'width':8,'height':15},
+            }),
+        },
+        geometries: [
+            {//第1条线
+                'id': 'pl_1',//折线唯一标识，删除时使用
+                'styleId': 'style_blue',//绑定样式名
+            },
+        ]
+    });
+    var path = [];
+
     // 初始化轨迹线条
-    var path = new qq.maps.Polyline({
+/*    var path = new qq.maps.Polyline({
         path: [],
         map: map,
         strokeColor: '#FF0000',
         strokeWeight: 3
-    });
+    });*/
 
     // 定义位置变化回调函数
     function updatePosition(position) {
-        var latLng = new qq.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        var latLng = new TMap.LatLng(position.coords.latitude, position.coords.longitude);
         map.setCenter(latLng);
-        // 将新的位置坐标添加到轨迹路径中
-        path.getPath().push(latLng);
+        path.push(latLng);
+
+        console.log(path);
+
+        polylineLayer.updateGeometries([{
+            'id': 'pl_1',
+            'styleId': 'polyline1',
+            'paths': path,
+        },
+        ]);
+
+        if (path.length===0){
+        marker.add({
+            id: 'start',
+            styleId: 'start',
+            position: path[0],
+        });
+
+
+        }
+/*        polylineLayer.add({
+            'id': 'pl_1',//折线唯一标识，删除时使用
+            'styleId': 'polyline1',//绑定样式名
+            'paths': path
+        });*/
+/*        // 将新的位置坐标添加到轨迹路径中
 
         // 更新轨迹线条
-        path.setPath(path.getPath());
+        // path.setPath(path.getPath());
 
         // 移动地图中心到当前位置
-        map.panTo(latLng);
+        // map.panTo(latLng);*/
     }
 
     // 开始监听位置变化
-    if (navigator.geolocation) {
-        var watchId = navigator.geolocation.watchPosition(updatePosition);
-    } else {
-        alert('浏览器不支持地理定位功能！');
-    }
+    // if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(updatePosition);
+
+
+
+    // } else {
+    //     alert('浏览器不支持地理定位功能！');
+    // }
 </script>
 </body>
 </html>
