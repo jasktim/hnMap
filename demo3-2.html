@@ -17,14 +17,14 @@
 </head>
 <body>
 <!-- 地图容器 -->
-<div id="map" style="width: 100%; height: 750px;"></div>
-
+<div id="map"></div>
+<button id="getLocationBtn">开始导航</button>
 <script>
 
     // 初始化地图对象
     var map = new TMap.Map("map", {
         center: new TMap.LatLng(39.916527, 116.397128),
-        zoom: 18
+        zoom: 20
     });
 
     var marker = new TMap.MultiMarker({
@@ -73,6 +73,9 @@
         strokeColor: '#FF0000',
         strokeWeight: 3
     });*/
+    console.log(path);
+    console.log(path.length);
+
 
     // 定义位置变化回调函数
     function updatePosition(position) {
@@ -81,22 +84,24 @@
         path.push(latLng);
 
         console.log(path);
+        console.log(path.length);
 
-        polylineLayer.updateGeometries([{
-            'id': 'pl_1',
-            'styleId': 'polyline1',
-            'paths': path,
-        },
-        ]);
 
+
+        if (path.length>=2){
+            polylineLayer.updateGeometries([{
+                'id': 'pl_1',
+                'styleId': 'polyline1',
+                'paths': path,
+            },
+            ]);
+        }
         if (path.length===0){
-        marker.add({
-            id: 'start',
-            styleId: 'start',
-            position: path[0],
-        });
-
-
+            marker.add({
+                id: 'start',
+                styleId: 'start',
+                position: path[0],
+            });
         }
 /*        polylineLayer.add({
             'id': 'pl_1',//折线唯一标识，删除时使用
@@ -114,7 +119,15 @@
 
     // 开始监听位置变化
     // if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(updatePosition);
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(updatePosition);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+    document.getElementById("getLocationBtn").addEventListener("click", getLocation);
 
 
 
