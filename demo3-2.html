@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map with Moving Trajectory</title>
+    <!-- 引入腾讯地图 JavaScript API -->
+    <script src="https://map.qq.com/api/js?v=2.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>
+    <style>
+        #map {
+            width: 100%;
+            height: 400px; /* 设置地图容器的高度 */
+        }
+    </style>
+</head>
+<body>
+<!-- 地图容器 -->
+<div id="map"></div>
+
+<script>
+    // 初始化地图对象
+    var map = new qq.maps.Map(document.getElementById('map'), {
+        center: new qq.maps.LatLng(39.916527, 116.397128), // 北京市中心坐标
+        zoom: 12 // 缩放级别
+    });
+
+    // 初始化轨迹线条
+    var path = new qq.maps.Polyline({
+        map: map,
+        strokeColor: '#0000FF',
+        strokeWeight: 3
+    });
+
+    // 获取当前位置并监听位置变化
+    navigator.geolocation.watchPosition(function(position) {
+        var latLng = new qq.maps.LatLng(position.coords.latitude, position.coords.longitude);
+
+        // 将新的位置坐标添加到轨迹路径中
+        path.getPath().push(latLng);
+
+        // 更新轨迹线条
+        path.setPath(path.getPath());
+
+        // 移动地图中心到当前位置
+        map.panTo(latLng);
+    });
+</script>
+</body>
+</html>

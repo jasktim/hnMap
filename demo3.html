@@ -15,13 +15,22 @@
 <script>
     // function init() {
         var map = new TMap.Map("map", {
-            center: new TMap.LatLng(39.9042, 116.4074),
+            center: new TMap.LatLng(39.916527, 116.397128),
             zoom: 15
         });
 
         marker = new TMap.MultiMarker({
             id: 'marker',
             map: map,
+            styles: {
+                'start': new TMap.MarkerStyle({
+                    anchor: {
+                        x: 16,
+                        y: 32,
+                    },
+                    src: 'https://mapapi.qq.com/web/miniprogram/demoCenter/images/marker-start.png',
+                }),
+            }
         });
 
         // 获取用户的GPS坐标
@@ -35,9 +44,13 @@
                 title: "您的位置"
             });
             marker.setMap(map);*/
+
             marker.add({
+                id: 'start',
+                styleId: 'start',
                 position: userLocation,
             });
+
             console.log(navigator.geolocation);
         }, function(error) {
             console.error('无法获取位置: ', error);
