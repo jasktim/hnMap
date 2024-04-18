@@ -27,18 +27,26 @@
         zoom: 20
     });
 
-    var marker = new TMap.MultiMarker({
-        id: 'marker',
+    var marker1 = new TMap.MultiMarker({
+        id: 'marker1',
         map: map,
         styles: {
-            'start': new TMap.MarkerStyle({
+            'end': new TMap.MarkerStyle({
                 anchor: {
                     x: 16,
                     y: 32,
                 },
                 src: 'https://mapapi.qq.com/web/miniprogram/demoCenter/images/marker-start.png',
             }),
-            "marker": new TMap.MarkerStyle({
+        }
+    });
+
+
+    var marker2 = new TMap.MultiMarker({
+        id: 'marker2',
+        map: map,
+        styles: {
+            "start": new TMap.MarkerStyle({
                 "width": 24,
                 "height": 35,
                 "anchor": { x: 12, y: 8 },
@@ -100,16 +108,16 @@
             },
             ]);
 
-            marker.add({
-                id: 'marker',
-                styleId: 'marker',
+            marker2.add({
+                id: 'start',
+                styleId: 'start',
                 position: path[path.length-1],
             });
         }
         if (path.length===0){
-            marker.add({
-                id: 'start',
-                styleId: 'start',
+            marker1.add({
+                id: 'end',
+                styleId: 'end',
                 position: path[0],
             });
         }
