@@ -38,6 +38,12 @@
                 },
                 src: 'https://mapapi.qq.com/web/miniprogram/demoCenter/images/marker-start.png',
             }),
+            "marker": new TMap.MarkerStyle({
+                "width": 24,
+                "height": 35,
+                "anchor": { x: 12, y: 8 },
+                "src": 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png'
+            })
         }
     });
 
@@ -86,20 +92,28 @@
         console.log(path);
         console.log(path.length);
 
-        if (path.length>=2){
+        if (path.length >= 2) {
             polylineLayer.updateGeometries([{
                 'id': 'pl_1',
                 'styleId': 'polyline1',
                 'paths': path,
             },
             ]);
+
+            marker.add({
+                id: 'start',
+                styleId: 'marker',
+                position: path[path.lenght-1],
+            });
         }
-        // if (path.length===0){
+        if (path.length===0){
             marker.add({
                 id: 'start',
                 styleId: 'start',
                 position: path[0],
             });
+        }
+
 
     }
 
