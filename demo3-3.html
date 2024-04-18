@@ -52,7 +52,17 @@
                 "anchor": { x: 12, y: 8 },
                 "src": 'https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png'
             })
-        }
+        },
+        //点标记数据数组
+        geometries: [{
+            "id": "start",   //点标记唯一标识，后续如果有删除、修改位置等操作，都需要此id
+            "styleId": 'start',  //指定样式id
+            "position": new TMap.LatLng(39.954104, 116.357503),  //点标记坐标位置
+            "properties": {//自定义属性
+                "title": "marker1"
+            }
+        },
+        ]
     });
 
     var polylineLayer = new TMap.MultiPolyline({
@@ -108,11 +118,11 @@
             },
             ]);
 
-            marker2.add({
+            marker2.updateGeometries([{
                 id: 'start',
                 styleId: 'start',
                 position: path[path.length-1],
-            });
+            },]);
         }
         if (path.length===0){
             marker1.add({
@@ -120,6 +130,7 @@
                 styleId: 'end',
                 position: path[0],
             });
+
         }
 
 
