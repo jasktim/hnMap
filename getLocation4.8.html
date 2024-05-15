@@ -95,6 +95,7 @@
 
         <div style="padding: 0;margin: 0;font-size: 16px;float: right;">
             <button class="btn-d" type="button" onclick="openClickPoi()">地图选点</button>
+<!--            <button class="btn-d" type="button" onclick="modifyIsFirst()">起点</button>-->
             <z id="z1">
                 <button class="btn-d" type="button" onclick="setTowPoints()">两点</button>
                 <button class="btn-d" type="button" onclick="setMorePoints()">多点</button>
@@ -114,7 +115,9 @@
                     <label for="line3">路线3<input type="radio" id="line3" name="line" /></label>
 <!--                    <input class="btn-d" type="submit" value="开始导航" onclick="simulatedNavigation()"/>-->
                     <input class="btn-d" type="submit" value="模拟导航" onclick="startNavigating()"/>
+
                 </form>
+
             </z>
 
         </div>
@@ -269,8 +272,8 @@
     var poi_lat;
     var poi_lng;
     // 监听判断
+    var IsFirst = true;
     var click_poi = false;
-
     map.on("tilesloaded", function () {
         document.getElementById("img").style.display="none";
     });
@@ -372,10 +375,11 @@
         poi = [];
         poi_lat =null;
         poi_lng =null;
+        IsFirst = true;
         click_poi = false;
         coords = [[],[],[]];
         removeAllPolyline();
-        createFirstMarker();
+        // createFirstMarker();
 
     }
 
@@ -431,6 +435,9 @@
         // way = 3;
         jiexiWay(ways[2]);
     }
+    function modifyIsFirst() {
+        IsFirst = true;
+    }
     //监听点击事件添加marker
     function openClickPoi() {
         click_poi = true;
@@ -438,14 +445,35 @@
         removeAllPolyline();
         InitSearchMarker();
         InitMarker();
-        createFirstMarker();
+        // createFirstMarker();
         InitLabel();
         // document.querySelector('.z1').style.display = "block";
         console.log(poi);
 
     }
+    // 1
     map.on("click", (evt) => {
-        if (click_poi) {
+        if (click_poi&&IsFirst) {
+            removeAllPolyline();
+            poi_lat = evt.latLng.getLat();
+            poi_lng = evt.latLng.getLng();
+
+            markerLayer.setGeometries([{
+                id: 'first',
+                position: evt.latLng,
+            },]);
+            now_lat = poi_lat;
+            now_lng = poi_lng;
+            poi[0]=(`${now_lat},${now_lng}`);
+
+            console.log(now_lat+","+now_lng);
+            IsFirst = false;
+        }
+
+    });
+    // 2
+    map.on("click", (evt) => {
+        if (click_poi&&!IsFirst) {
             removeAllPolyline();
 
             poi_lat = evt.latLng.getLat();
@@ -816,6 +844,7 @@
         removeAllPolyline();
         InitSearchMarker();
         InitLabel();
+        IsFirst = true;
         click_poi = false;
         // 获取输入框的值
         let keyword = document.getElementById("searchInput").value;
