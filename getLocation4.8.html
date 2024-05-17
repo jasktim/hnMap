@@ -8,7 +8,6 @@
     <link rel="shortcut icon" href="https://tse1-mm.cn.bing.net/th/id/OIP-C.Gq2ZpwQam9-F2vvphQzacwAAAA?w=171&h=176&c=7&r=0&o=5&dpr=1.4&pid=1.7"/>
     <script charset="utf-8" src="https://map.qq.com/api/gljs?v=1.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77&libraries=geometry"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
     <script src="https://www.layuicdn.com/layer-v3.1.0/layer.js"></script>
     <style>
         html,
@@ -17,12 +16,10 @@
             margin: 0px;
             padding: 0px;
         }
-
         #container {
             width: 100%;
             height: 750px;
         }
-
         #img {
             position: absolute;
             left: 0px;
@@ -31,7 +28,6 @@
             width: 100%;
             z-index: 10000;
         }
-
         .info {
             position: absolute;
             left: 20px;
@@ -44,7 +40,6 @@
         #selectLine label{
             cursor: pointer;
         }
-
         #searchInput {
             padding: 10px;
             border: 1px solid #ccc;
@@ -52,7 +47,6 @@
             font-size: 16px;
             margin-right: 5px;
         }
-
         #searchButton {
             padding: 10px 20px;
             background-color: #007bff;
@@ -63,11 +57,9 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
         #searchButton:hover {
             background-color: #0056b3;
         }
-
         #view {
             width: 33px;
             height: 65px;
@@ -76,52 +68,34 @@
             top: 300px;
             z-index: 8000;
         }
-
         .btn-d {
             font-size: 15px;
         }
-
         z{
         }
     </style>
-
 </head>
-
 <body>
     <img id="img" src="https://www.hnfnu.edu.cn/8.jpg"/>
     <div class="ab">
     <marquee behavior="alternate" direction="left" align="middle">
         欢迎使用一师校园导航系统！！！</marquee>
-
         <div style="padding: 0;margin: 0;font-size: 16px;float: right;">
             <button class="btn-d" type="button" onclick="openClickPoi()">地图选点</button>
-<!--            <button class="btn-d" type="button" onclick="modifyIsFirst()">起点</button>-->
-            <z id="z1">
-                <button class="btn-d" type="button" onclick="setTowPoints()">两点</button>
-                <button class="btn-d" type="button" onclick="setMorePoints()">多点</button>
-                <z id="z2">
-                    <button class="btn-d" type="button" onclick="setDriving()">驾车</button>
-                    <button class="btn-d" type="button" onclick="setWalking()">步行</button>
-                    <button class="btn-d" type="button" onclick="setBicycling()">骑行</button>
-                    <button class="btn-d" type="button" onclick="InitMap()">重置</button>
-                </z>
-            </z>
-
-            <z id="z3">
+            <button class="btn-d" type="button" onclick="setTowPoints()">两点</button>
+            <button class="btn-d" type="button" onclick="setMorePoints()">多点</button>
+            <button class="btn-d" type="button" onclick="setDriving()">驾车</button>
+            <button class="btn-d" type="button" onclick="setWalking()">步行</button>
+            <button class="btn-d" type="button" onclick="setBicycling()">骑行</button>
+            <button class="btn-d" type="button" onclick="InitMap()">重置</button>
                 <form action="javascript:;" id="selectLine" class="btn-d">
                     选择路线:
                     <label for="line1">路线1<input type="radio" id="line1" name="line" checked="checked"/></label>
                     <label for="line2">路线2<input type="radio" id="line2" name="line" /></label>
                     <label for="line3">路线3<input type="radio" id="line3" name="line" /></label>
-<!--                    <input class="btn-d" type="submit" value="开始导航" onclick="simulatedNavigation()"/>-->
                     <input class="btn-d" type="submit" value="模拟导航" onclick="startNavigating()"/>
-
                 </form>
-
-            </z>
-
         </div>
-
         <div class="search-container">
         <input type="text" id="searchInput" placeholder="输入关键字">
         <button id="searchButton" onclick="search()">搜索</button>
@@ -132,19 +106,16 @@
         <button class="btn-d" id="btn-3d" onclick="change3D()">3D</button>
     </div>
     <div id="container"></div>
-
     <div class="info" style="display: none">
         <p></p>
         <p>当前行驶距离：0米</p>
         <p></p>
     </div>
-
 </body>
 <script type="text/javascript">
-    var ne = new TMap.LatLng(28.201551, 112.875531);//东北角坐标
-    var sw = new TMap.LatLng(28.187550, 112.860875);//西南角坐标
+    var ne = new TMap.LatLng(28.201551, 112.875531);
+    var sw = new TMap.LatLng(28.187550, 112.860875);
     var center = new TMap.LatLng(28.196209,112.867602);
-    // var center = new TMap.LatLng(28.197121,112.868943);
     var map = new TMap.Map("container", {
         pitch: 30,
         zoom: 16,
@@ -154,13 +125,9 @@
             type: 'vector',
             features: ['base', 'building3d', 'label'],
         }
-        // disableDefaultUI: false
-        // control: TMap.constants.DEFAULT_CONTROL_ID.ZOOM,
     });
-
-    map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.ZOOM);      // 删除
-    map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.SCALE);     // 删除比例尺
-    // 去除腾讯地图logo
+    map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.ZOOM);
+    map.removeControl(TMap.constants.DEFAULT_CONTROL_ID.SCALE);
     $("#container").bind("DOMNodeInserted",function(e){
         var tempCount = 0;
         $("#container .smnoprint").siblings().each(function(){
@@ -183,8 +150,6 @@
                 },
                 faceTo: 'map',
                 rotate: 180,
-                // src: 'https://mapapi.qq.com/web/mapComponents/componentsTest/zyTest/static/model_taxi.png?a=1',
-                // src: './img/blue_arrows.png',
                 src: './img/blue_arrows.png',
             }),
             'car-down': new TMap.MarkerStyle({
@@ -196,8 +161,6 @@
                 },
                 faceTo: 'map',
                 rotate: 180,
-                // src: 'https://mapapi.qq.com/web/mapComponents/componentsTest/zyTest/static/model_taxi.png?a=1',
-                // src: './img/blue_arrows.png',
                 src: './img/car2.png',
             }),
             'start': new TMap.MarkerStyle({
@@ -210,16 +173,13 @@
             'end': new TMap.MarkerStyle({
                 src: 'https://mapapi.qq.com/web/miniprogram/demoCenter/images/marker-end.png',
             }),
-            //点标注的相关样式
             "poi_marker": new TMap.MarkerStyle({
                 "width": 25,
                 "height": 35,
                 src: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png"
             }),
-
         }
     });
-    //初始marker
     var marker = new TMap.MultiMarker({
         id: 'marker-layer2',
         map: map,
@@ -237,53 +197,44 @@
         map: map,
         styles: {
             'label': new TMap.LabelStyle({
-                'color': '#3777FF', //颜色属性
-                'size': 20, //文字大小属性
-                'offset': {x: 0, y: 10}, //文字偏移属性单位为像素
-                'angle': 0, //文字旋转属性
-                'alignment': 'center', //文字锚点水平对齐属性
-                'verticalAlignment': 'top' //文字锚点垂直对齐属性
+                'color': '#3777FF',
+                'size': 20,
+                'offset': {x: 0, y: 10},
+                'angle': 0,
+                'alignment': 'center',
+                'verticalAlignment': 'top'
             })
         },});
     var infoWindow = new TMap.InfoWindow({
         map: map,
         position: new TMap.LatLng(28.196209,112.867602),
-        offset: { x: 0, y: 0 } //设置信息窗相对position偏移像素
+        offset: { x: 0, y: 0 }
     });
-    infoWindow.close();//初始关闭信息窗关闭
-
-    // var marker;
+    infoWindow.close();
     var key = 'NUMBZ-QW4RF-CLQJI-J5A77-XIRM3-26BWY';
     var isMoving = false;
     var roation;
     var position;
-    var point;  // 2 两点
+    var point;
     var count;
-    var way;    // 1 驾车   2 步行   3 骑行
+    var way;
     const ways = ['driving','walking','bicycling']
-    var polylineIndex;  // 路线编号 1 2 3
+    var polylineIndex;
     var idIndex = 1;
-    // 当前经纬
     var now_lat;
     var now_lng;
     var pls;
-    // 目的经纬
     var poi;
     var poi_lat;
     var poi_lng;
-    // 监听判断
     var IsFirst = true;
     var click_poi = false;
     map.on("tilesloaded", function () {
         document.getElementById("img").style.display="none";
     });
-
-
     function InitMarker() {
         if (markerLayer)
             markerLayer.setMap(null);
-
-            //初始化marker图层
             markerLayer = new TMap.MultiMarker({
                 id: 'marker-layer',
                 map: map,
@@ -297,8 +248,6 @@
                         },
                         faceTo: 'map',
                         rotate: 180,
-                        // src: 'https://mapapi.qq.com/web/mapComponents/componentsTest/zyTest/static/model_taxi.png?a=1',
-                        // src: './img/blue_arrows.png',
                         src: './img/blue_arrows.png',
                     }),
                     'car-down': new TMap.MarkerStyle({
@@ -310,8 +259,6 @@
                         },
                         faceTo: 'map',
                         rotate: 180,
-                        // src: 'https://mapapi.qq.com/web/mapComponents/componentsTest/zyTest/static/model_taxi.png?a=1',
-                        // src: './img/blue_arrows.png',
                         src: './img/car2.png',
                     }),
                     'start': new TMap.MarkerStyle({
@@ -324,21 +271,16 @@
                     'end': new TMap.MarkerStyle({
                         src: 'https://mapapi.qq.com/web/miniprogram/demoCenter/images/marker-end.png',
                     }),
-                    //点标注的相关样式
                     "poi_marker": new TMap.MarkerStyle({
                         "width": 25,
                         "height": 35,
-                        // "anchor": { x: 12, y: 35 }, // 锚点，默认为{ x: width/2, y: height }
                         src: "https://mapapi.qq.com/web/lbs/javascriptGL/demo/img/markerDefault.png"
                     }),
-
                 }
             });
     }
     function InitSearchMarker() {
-
         if (marker.getGeometries().length > 0) {
-            // 全部删除，也可以使用remove([id])进行单个删除
             marker.remove(marker.getGeometries().map(v => v.id))
         }
     }
@@ -350,25 +292,24 @@
             map: map,
             styles: {
                 'label': new TMap.LabelStyle({
-                    'color': '#3777FF', //颜色属性
-                    'size': 20, //文字大小属性
-                    'offset': {x: 0, y: 10}, //文字偏移属性单位为像素
-                    'angle': 0, //文字旋转属性
-                    'alignment': 'center', //文字锚点水平对齐属性
-                    'verticalAlignment': 'top' //文字锚点垂直对齐属性
+                    'color': '#3777FF',
+                    'size': 20,
+                    'offset': {x: 0, y: 10},
+                    'angle': 0,
+                    'alignment': 'center',
+                    'verticalAlignment': 'top'
                 })
             },});
     }
-
     function InitMap() {
         document.querySelector('.info').style.display = "none";
         InitSearchMarker();
         InitMarker();
         InitLabel();
         map.setPitch(30);
-        infoWindow.close();//初始关闭信息窗关闭
+        infoWindow.close();
         idIndex = 1;
-        point = 2;  // 2 两点
+        point = 2;
         count = 100;
         way = null;
         pls = [[],[],[]];
@@ -379,11 +320,7 @@
         click_poi = false;
         coords = [[],[],[]];
         removeAllPolyline();
-        // createFirstMarker();
-
     }
-
-
     function createFirstMarker() {
         markerLayer.add({
             position: center,
@@ -391,11 +328,8 @@
         now_lat = markerLayer.geometries[0].position.lat;
         now_lng = markerLayer.geometries[0].position.lng;
         poi.push(`${now_lat},${now_lng}`);
-
-        console.log(now_lat+","+now_lng);
     }
     window.onload=InitMap;
-
     function change2D() {
         map.setViewMode('2D');
     }
@@ -403,61 +337,43 @@
         map.setViewMode('3D');
         map.setPitch(30);
     }
-
-    //创建marker事件
     function setTowPoints() {
-        // console.log(markerLayer["geometries"][markerLayer["geometries"].length-1])
-
         removeAllPolyline();
         while (markerLayer["geometries"].length>=2)
             markerLayer.remove(markerLayer["geometries"][1].id);
         while (poi.length>=2)
             poi.pop();
         point = 2;
-
-        console.log(poi);
     }
     function setMorePoints() {
         removeAllPolyline();
         point = 3;
-        console.log(poi);
     }
-    
     function setDriving() {
-        // way = 1;
         jiexiWay(ways[0]);
     }
     function setWalking() {
-        // way = 2;
         jiexiWay(ways[1]);
     }
     function setBicycling() {
-        // way = 3;
         jiexiWay(ways[2]);
     }
     function modifyIsFirst() {
         IsFirst = true;
     }
-    //监听点击事件添加marker
     function openClickPoi() {
         click_poi = true;
         poi = [];
         removeAllPolyline();
         InitSearchMarker();
         InitMarker();
-        // createFirstMarker();
         InitLabel();
-        // document.querySelector('.z1').style.display = "block";
-        console.log(poi);
-
     }
-    // 1
     map.on("click", (evt) => {
         if (click_poi&&IsFirst) {
             removeAllPolyline();
             poi_lat = evt.latLng.getLat();
             poi_lng = evt.latLng.getLng();
-
             markerLayer.setGeometries([{
                 id: 'first',
                 position: evt.latLng,
@@ -465,20 +381,14 @@
             now_lat = poi_lat;
             now_lng = poi_lng;
             poi[0]=(`${now_lat},${now_lng}`);
-
-            console.log(now_lat+","+now_lng);
             IsFirst = false;
         }
-
     });
-    // 2
     map.on("click", (evt) => {
         if (click_poi&&!IsFirst) {
             removeAllPolyline();
-
             poi_lat = evt.latLng.getLat();
             poi_lng = evt.latLng.getLng();
-
             if (point === 2) {
                 while (markerLayer["geometries"].length >= 2)
                     markerLayer.remove(markerLayer["geometries"][1].id);
@@ -486,74 +396,43 @@
             } else {
                 poi.push(`${poi_lat},${poi_lng}`);
             }
-            // console.log(markerLayer);
             markerLayer.add({
                 position: evt.latLng
             });
-
-            console.log(poi);
-            console.log(poi_lat + "," + poi_lng);
-
         }
-
     });
-
-
-    //发起JSONP请求，获取路线规划结果
     function jiexiWay(path) {
-        // if (!(poi_lat||poi_lng))return;
         removeAllPolyline();
         if (!(poi_lat!=null||poi_lng!=null||poi.length))return;
-        // let poiString = poi.join(";");
         way = path;
         count = poi.length-1;
         for (let i = 1; i < poi.length; i++) {
-            // console.log(poi[i]);
-
-            //WebServiceAPI请求URL（驾车路线规划默认会参考实时路况进行计算）
-            let url = "https://apis.map.qq.com/ws/direction/v1/"+path+"/"; //请求路径
-            url += "?from=" + poi[i-1];  //起点坐标
-            url += "&to=" + poi[i];  //终点坐标
-            url += "&output=jsonp&callback=cb";	//指定JSONP回调函数名，本例为cb
-            url += "&key="+key; //开发key，可在控制台自助创建
+            let url = "https://apis.map.qq.com/ws/direction/v1/"+path+"/";
+            url += "?from=" + poi[i-1];
+            url += "&to=" + poi[i];
+            url += "&output=jsonp&callback=cb";
+            url += "&key="+key;
             url += "&get_mp=1";
-            console.log(url);
             jsonp_request(url);
-
         }
         coords = [[],[],[]];
     }
-
-    //浏览器调用WebServiceAPI需要通过Jsonp的方式，此处定义了发送JOSNP请求的函数
     function jsonp_request(url) {
         var script = document.createElement('script');
         script.src = url;
         document.body.appendChild(script);
     }
-    // var coords = [[],[],[]];
-
     var lineMaxCount = 0;
-    //定义请求回调函数
     function cb(ret) {
         if (lineMaxCount < ret.result.routes.length)lineMaxCount = ret.result.routes.length;
-        console.log(ret.result.routes.length);
-
         for (let j = 0; j < ret.result.routes.length; j++) {
             coords[j] = coords[j].concat(ret.result.routes[j].polyline);
         }
-
-        // 标记当前回调函数已执行完成
-        // 检查是否所有的回调函数都已执行完成
         if (--count<=0) analysis_polyline(coords);
     }
-    //定义请求回调函数，在此拿到计算得到的路线，并进行绘制
-    // 拿到计算得到的路线,并进行绘制
     function analysis_polyline() {
-
-            console.log(coords);
             polylineIndex = 1;
             try {
-            //坐标解压（返回的点串坐标，通过前向差分进行压缩）
                 var kr = 1000000;
                 for (let i = 0; i < coords.length; i++) {
                     for (let j = 2; j < coords[i].length; j++) {
@@ -561,78 +440,60 @@
                     }
                 }
                 for (let i = 0; i < coords.length; i++) {
-                    // var pls = [[],[],[]];
-                    //将解压后的坐标放入点串数组pl中
                     for (let j = 0; j < coords[i].length; j += 2) {
                         pls[i].push(new TMap.LatLng(coords[i][j], coords[i][j + 1]));
                     }
-
-                    // console.log(pls[i]);
-                    display_polyline(pls[i])//显示路线
+                    display_polyline(pls[i])
                     polylineIndex++;
                 }
-
             } catch (e) {
-                console.log(e);
             }
     }
-
-    //创建 MultiPolyline显示折线
     polylineLayer = new TMap.MultiPolyline({
-        id: 'polyline-layer', //图层唯一标识
-        map: map,//绘制到目标地图
-        //折线样式定义
+        id: 'polyline-layer',
+        map: map,
         styles: {
             'polyline1': new TMap.PolylineStyle({
-                // 'color': '#3777FF', //线填充色
-                'color': '#2A88FF', //线填充色
-                'width': 8, //折线宽度
-                'borderWidth': 3, //边线宽度
-                'borderColor': '#0569FF', //边线颜色
-                'lineCap': 'round', //线端头方式
+                'color': '#2A88FF',
+                'width': 8,
+                'borderWidth': 3,
+                'borderColor': '#0569FF',
+                'lineCap': 'round',
                 'showArrow': true,
                 'arrowOptions': {'width':8,'height':15},
             }),
             'polyline2': new TMap.PolylineStyle({
-                // 'color': '#00FF00', //线填充色
-                'color': '#afeeee', //线填充色
-                'width': 8, //折线宽度
-                'borderWidth': 3, //边线宽度
-                // 'borderColor': 'rgba(0,125,255,0.5)', //边线颜色
-                'borderColor': '#4798b3', //边线颜色
-                'lineCap': 'round', //线端头方式
+                'color': '#afeeee',
+                'width': 8,
+                'borderWidth': 3,
+                'borderColor': '#4798b3',
+                'lineCap': 'round',
                 'showArrow': true,
                 'arrowOptions': {'width':8,'height':15},
             }),
             'polyline3': new TMap.PolylineStyle({
-                // 'color': '#ff0000', //线填充色
-                'color': '#afeeee', //线填充色
-                'width': 8,//折线宽度
-                'borderWidth': 3, //边线宽度
-                // 'borderColor': '#999', //边线颜色
-                'borderColor': '#4798b3', //边线颜色
-                'lineCap': 'square', //线端头方式
+                'color': '#afeeee',
+                'width': 8,
+                'borderWidth': 3,
+                'borderColor': '#4798b3',
+                'lineCap': 'square',
                 'showArrow': true,
                 'arrowOptions': {'width':8,'height':15},
             }),
-
             'style_gray': new TMap.PolylineStyle({
-                color: '#ccc', // 线填充色
-                width: 8, // 折线宽度
-                borderWidth: 3, // 边线宽度
-                borderColor: '#FFF', // 边线颜色
-                lineCap: 'round', // 线端头方式
+                color: '#ccc',
+                width: 8,
+                borderWidth: 3,
+                borderColor: '#FFF',
+                lineCap: 'round',
             }),
         },
-
     });
     function display_polyline(pl) {
-        console.log(pl);
         if (pl.length === 0)return;
-        //折线数据定义
         polylineLayer.add({
-            'id': 'line' + polylineIndex,//折线唯一标识，删除时使用
-            'styleId': 'polyline' + polylineIndex,//绑定样式名
+            'id': 'line' + polylineIndex,
+            'styleId': 'polyline' + polylineIndex,
             'paths': pl
         });
     }
@@ -644,7 +505,6 @@
                 polylineLayer.remove(polylineLayerElementKey);
             }
         } catch (e) {
-            console.log("无line值");
         }
     }
     function removeOtherPolyline(selectedLineId) {
@@ -657,29 +517,21 @@
             console.error("remove error:"+e);
         }
     }
-
-
 </script>
 <script type="text/javascript">
-    // 起点 终点 小车
     var pl;
     function initInfo() {
-        // 初始化全程长度及起始坐标
-        console.log(pl);
         var distance = TMap.geometry.computeDistance(pl);
         var fullLength = document.querySelectorAll('.info p')[0];
         fullLength.innerHTML = '路线全程长度：' + parseNumber(distance, 2) + '米';
         var currentLatLng = document.querySelectorAll('.info p')[2];
         currentLatLng.innerHTML = '当前坐标：' + parseNumber(pl[0].lat, 6) + ',' + parseNumber(pl[0].lng, 6);
-        // currentLatLng.innerHTML = '当前坐标：' + parseNumber(pl[0].lat, 20) + ',' + parseNumber(pl[0].lng, 20);
     }
     function parseNumber(value, num) {
-        // 解析数字
         return parseFloat(value).toFixed(num);
     }
     function carMove() {
         map.off('idle', carMove);
-        console.log(pl);
         markerLayer.moveAlong(
             {
                 car: {
@@ -693,12 +545,9 @@
         );
         isMoving = true;
     }
-
     function startNavigating() {
         if (Object.keys(polylineLayer["_idSet"]).length==0)return;
         if (isMoving) return;
-
-        // 获取选中的路线的 ID
         var selectedLineId;
         var radios = document.getElementsByName('line');
         for (var i = 0; i < radios.length; i++) {
@@ -709,10 +558,7 @@
         }
         removeOtherPolyline(selectedLineId);
         document.querySelector('.info').style.display = "block";
-        // change3D();
-        console.log(parseInt(selectedLineId.split('line')[1]));
         pl = pls[parseInt(selectedLineId.split('line')[1])-1];
-        // let pl = pls[0];
         initInfo();
         let mark = 'arrow-down';
         markerLayer.remove(markerLayer["geometries"][0].id);
@@ -733,13 +579,11 @@
                 styleId: 'end',
                 position: pl[pl.length-1],
             },]);
-
         polylineLayer.add({
-            'id': 'style_gray',//折线唯一标识，删除时使用
-            'styleId': 'polyline1',//绑定样式名
+            'id': 'style_gray',
+            'styleId': 'polyline1',
             'paths': pl
         });
-
         map.easeTo(
             {
                 zoom: 20,
@@ -750,10 +594,8 @@
                 duration: 1000,
             }
         );
-
         map.on('idle', carMove);
         markerLayer.on('moving', function (e) {
-
             if (e.car) {
                 roation = TMap.geometry.computeHeading(
                     e.car.passedLatLngs[e.car.passedLatLngs.length - 2],
@@ -766,27 +608,21 @@
                     center: position,
                     rotation: e.car.angle && e.car.angle,
                     zoom: 20,
-                    pitch: 70,  // 最好不修
+                    pitch: 70,
                 },
                 {
                     duration: 300,
                 }
             );
-            // 移动路线置灰
             polylineLayer.updateGeometries([
                 {
-                    // id: 'path2',
                     id: 'style_gray',
                     styleId: 'style_gray',
                     paths: e.car && e.car.passedLatLngs,
                 },
             ]);
-            // 计算当前移动距离
             var currentDistance = TMap.geometry.computeDistance(e.car.passedLatLngs);
-
-            // 移动过程中更新已行驶距离
             document.querySelectorAll('.info p')[1].innerHTML = '当前行驶距离：' + parseNumber(currentDistance, 2) + '米';
-            // 移动过程中更新当前坐标
             var movingLatLng = e.car.passedLatLngs[e.car.passedLatLngs.length - 1];
             document.querySelectorAll('.info p')[2].innerHTML = '当前坐标：' + parseNumber(movingLatLng.lat, 6) + ',' + parseNumber(movingLatLng.lng, 6);
         });
@@ -797,21 +633,12 @@
             isMoving = false;
         });
     }
-
-    // 添加监听器
     document.addEventListener('DOMContentLoaded', function() {
         var form = document.getElementById('selectLine');
         var radios = form.querySelectorAll('input[type="radio"]');
-        // console.log(radios);
-        // 遍历每个单选按钮
         radios.forEach(function (radio) {
             radio.addEventListener('click', function () {
-                // 检查是否已经选中了蓝色路线
                 var blueLine = form.querySelector('input[type="radio"][checked="checked"]');
-                // 将之前选中的蓝色路线改为淡蓝色
-
-                console.log(parseInt(blueLine.id.split('line')[1]) - 1);
-                console.log(parseInt(this.id.split('line')[1]) - 1);
                 if (blueLine && blueLine.id !== this.id) {
                     blueLine.removeAttribute('checked');
                     polylineLayer.updateGeometries([{
@@ -821,19 +648,14 @@
                     },
                     ]);
                 }
-
-                // 将当前点击的路线改为蓝色
                 if (!this.hasAttribute('checked')) {
                     this.setAttribute('checked', 'checked');
-                    // this.parentNode.style.color = 'blue'; // 改为蓝色
-                    // polylineLayer.setStyles(this.id, 'polyline1');
                     polylineLayer.updateGeometries([{
                         id: this.id,
                         styleId: 'polyline1',
                         paths: pls[parseInt(this.id.split('line')[1]) - 1],
                     },
                     ]);
-
                 }
             });
         });
@@ -846,9 +668,7 @@
         InitLabel();
         IsFirst = true;
         click_poi = false;
-        // 获取输入框的值
         let keyword = document.getElementById("searchInput").value;
-
         let search_url = "https://apis.map.qq.com/ws/place/v1/search" +
             "?boundary=rectangle(28.189353,112.863235,28.200398,112.873428)" +
             "&keyword=" + keyword+
@@ -858,21 +678,12 @@
         jsonp_request(search_url);
     }
     function search_poi(ret) {
-        console.log(ret.count);
         if (ret.count && ret.count>0)
         ret.data.forEach(function(item) {
-            // 获取每一项的title、lat和lng属性
             let title = item.title;
             let lat = item.location.lat;
             let lng = item.location.lng;
-
-            // 打印输出
-            console.log("标题：" + title);
-            console.log(lat+","+lng);
-            console.log("----------------------");
-            //初始化标记
             marker.add({
-                // id: 'start',
                 styleId: 'marker',
                 position: new TMap.LatLng(lat, lng),
                 properties: {
@@ -884,45 +695,37 @@
                 if(split_title != null && split_title.length !== 0)
                 title = split_title;
             }
-
             label.add({
-                'styleId': 'label', //样式id
-                'position': new TMap.LatLng(lat, lng), //标注点位置
-                'content': title, //标注文本
-                'properties': { //标注点的属性数据
+                'styleId': 'label',
+                'position': new TMap.LatLng(lat, lng),
+                'content': title,
+                'properties': {
                     'title': 'label'
                 }
             });
-
         });
     }
-    //监听标注点击事件
     marker.on("click", (evt) => {
         if (!click_poi) {
-            console.log(evt);
-            //设置infoWindow
-            infoWindow.open(); //打开信息窗
-            infoWindow.setPosition(evt.geometry.position);//设置信息窗位置
+            infoWindow.open();
+            infoWindow.setPosition(evt.geometry.position);
             let title = evt.geometry.properties.title.toString();
-            console.log(evt.geometry.position);
-            console.log(typeof evt.geometry.position);
             let str = "<table>" +
                 "<tr>" +
-                "<td width=\"100\" align=\"left\" id=\"po\" align=\"middle\" style=\"/*background-color: #3cace2;*/ font-size: 16px; line-height: 20px; width: 120px;\" data-darkreader-inline-bgcolor=\"\" data-darkreader-inline-color=\"\">"+title+"</td>" +
+                "<td width=\"100\" align=\"left\" id=\"po\" align=\"middle\" style=\" font-size: 16px; line-height: 20px; width: 120px;\" data-darkreader-inline-bgcolor=\"\" data-darkreader-inline-color=\"\">"+title+"</td>" +
                 "</tr>" +
                 "<td id=\"tcBack\" align=\"center\">" +
                       "   <button type=\"button\" onclick=\"SetTerminal('" + evt.geometry.position.lat + "', '" + evt.geometry.position.lng + "');\">" +
                       "       <span class=\"iconfont\" style=\"font-size: 12px;\"></span>&nbsp;到这" +
                       "   </button>" +
-                      "   <button type=\"button\" class=\"btn btn-outline-danger btn-sm\" onclick=\"/*javascript:*/SetOrigin('" + evt.geometry.position.lat + "', '" + evt.geometry.position.lng + "');\">" +
+                      "   <button type=\"button\" class=\"btn btn-outline-danger btn-sm\" onclick=\"SetOrigin('" + evt.geometry.position.lat + "', '" + evt.geometry.position.lng + "');\">" +
                       "       <span class=\"iconfont\" style=\"font-size: 12px;\"> </span>&nbsp;出发" +
                       "   </button>" +
                       " </td>" +
                     "</table>"
-            infoWindow.setContent(str);//设置信息窗内容
+            infoWindow.setContent(str);
         }
     });
-
     function SetOrigin(lat, lng) {
         removeAllPolyline();
         let origin_point = new TMap.LatLng(lat, lng);
@@ -933,7 +736,6 @@
         closeInfoWindow();
         poi[0] = `${lat},${lng}`;
     }
-
     function SetTerminal(lat, lng) {
         removeAllPolyline();
         let terminal_point = new TMap.LatLng(lat, lng);
@@ -945,7 +747,6 @@
         closeInfoWindow();
         poi[1] = `${lat},${lng}`;
     }
-
     function closeInfoWindow() {
         infoWindow.close();
     }
